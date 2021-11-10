@@ -6,7 +6,7 @@ inherit go go-mod
 
 GO_PACKAGE ?= ""
 
-GO_IMPORT = "github.com/elastic/beats"
+GO_IMPORT = "github.com/elastic/beats.git;git=v${PV}"
 GO_INSTALL = "${GO_IMPORT}/${GO_PACKAGE}"
 BEAT_FOLDER = "${S}/src/${GO_INSTALL}"
 
@@ -16,17 +16,16 @@ CGO_LDFLAGS += "--sysroot=${STAGING_DIR_TARGET} -L${STAGING_LIBDIR}"
 LICENSE = "Apache-2"
 LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE.txt;md5=00294979737b05a575493ff7b723f25c"
 
-# PV = "7.13.2"
 SRCREV = "${AUTOREV}"
 
 FILESEXTRAPATHS:append = "${THISDIR}/elastic-beats:"
 
 SRC_URI = " \
-        git://${GO_IMPORT}.git \
+        git://${GO_IMPORT} \
         file://${GO_PACKAGE}.yml \
         "
 
-RDEPENDS:${PN}-dev += "bash"
+RDEPENDS:${PN} += "bash"
 
 do_compile() {
     cd ${GO_PACKAGE}
@@ -64,12 +63,12 @@ create_exec_script() {
 # Script to run ${GO_PACKAGE} in foreground with the same path settings that
 # the init script / systemd unit file would do.
 
-exec ${datadir}/${GO_PACKAGE}/${GO_PACKAGE} \
-  --path.home ${datadir}/${GO_PACKAGE} \
-  --path.config ${sysconfdir}/${GO_PACKAGE} \
-  --path.data ${localstatedir}/lib/${GO_PACKAGE} \
-  --path.logs ${localstatedir}/log/${GO_PACKAGE} \
-  "$@"
+exec ${datadir}/${GO_PACKAGE}/${GO_PACKAGE} \\
+  --path.home ${datadir}/${GO_PACKAGE} \\
+  --path.config ${sysconfdir}/${GO_PACKAGE} \\
+  --path.data ${localstatedir}/lib/${GO_PACKAGE} \\
+  --path.logs ${localstatedir}/log/${GO_PACKAGE} \\
+  "\$@"
 
 EOF
     chmod +x ${WORKDIR}/${GO_PACKAGE}
