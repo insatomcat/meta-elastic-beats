@@ -6,7 +6,8 @@ inherit go go-mod
 
 GO_PACKAGE ?= ""
 
-GO_IMPORT = "github.com/elastic/beats.git;git=v${PV}"
+GO_IMPORT = "github.com/elastic/beats"
+GIT_URL = "git://${GO_IMPORT}.git;tag=v${PV};nobranch=1"
 GO_INSTALL = "${GO_IMPORT}/${GO_PACKAGE}"
 BEAT_FOLDER = "${S}/src/${GO_INSTALL}"
 
@@ -15,13 +16,11 @@ CGO_LDFLAGS += "--sysroot=${STAGING_DIR_TARGET} -L${STAGING_LIBDIR}"
 
 LICENSE = "Apache-2"
 LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE.txt;md5=00294979737b05a575493ff7b723f25c"
-
-SRCREV = "${AUTOREV}"
-
+SRC_URI[sha256sum] = "573d77e1d86e300b507f32736f7f390de3f4bbd15c08c73a2dab5e85acd155b7"
 FILESEXTRAPATHS:append = "${THISDIR}/elastic-beats:"
 
 SRC_URI = " \
-        git://${GO_IMPORT} \
+        ${GIT_URL} \
         file://${GO_PACKAGE}.yml \
         "
 
